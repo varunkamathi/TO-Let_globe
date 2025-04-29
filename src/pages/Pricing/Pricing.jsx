@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { plans } from "../../constant/index.js"; // Adjust the path as needed
+import { plans } from "../../constant_pricing/index.js"; // Adjust path if needed
 
 const Pricing = () => {
   const [showForm, setShowForm] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -22,6 +23,7 @@ const Pricing = () => {
 
   const handleCancel = () => {
     setShowForm(false);
+    setIsSubmitted(false);
     setSelectedPlan(null);
     setFormData({
       firstName: "",
@@ -49,15 +51,12 @@ const Pricing = () => {
       plan: selectedPlan,
       ...formData,
     });
-
-    alert("Subscription form submitted successfully!");
-    handleCancel();
+    setIsSubmitted(true); // Show success popup
   };
 
   return (
     <div className="min-h-screen bg- text-white py-16 px-4">
       <div className="max-w-7xl mx-auto text-center">
-
         <h1 className="text-4xl font-bold mb-4">Choose Your Perfect Plan</h1>
         <p className="text-gray-400 mb-12 max-w-2xl mx-auto">
           Find your ideal property with our flexible subscription options.
@@ -71,7 +70,9 @@ const Pricing = () => {
               )}
               <h2 className="text-2xl font-bold mb-2">{plan.title}</h2>
               <div className="flex items-baseline justify-center mb-2">
-                <span className="text-4xl font-bold text-yellow-400">{plan.price}</span>
+                <span className="text-4xl font-bold text-yellow-400">
+                  {plan.price}
+                </span>
                 <span className="text-gray-400 ml-1">{plan.period}</span>
               </div>
               <p className="text-gray-400 mb-6">{plan.description}</p>
@@ -99,146 +100,157 @@ const Pricing = () => {
           ))}
         </div>
 
-       {/* Modal */}
-{showForm && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div className="bg-slate-900 rounded-2xl p-8 w-full max-w-4xl relative text-black">
-      <button
-        onClick={handleCancel}
-        className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-2xl"
-      >
-        &times;
-      </button>
-      <h2 className="text-2xl text-white font-bold mb-6">{selectedPlan?.title} Subscription</h2>
-      
-      <form className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" onSubmit={handleSubmit}>
-        <div>
-          <label className="block mb-1 text-white">First Name</label>
-          <input
-            type="text"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleInputChange}
-            className="w-full p-3 rounded-lg border bg-white"
-            placeholder="First Name"
-            required
-          />
-        </div>
-        <div>
-          <label className="block mb-1 text-white">Last Name</label>
-          <input
-            type="text"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleInputChange}
-            className="w-full p-3 rounded-lg border bg-white"
-            placeholder="Last Name"
-            required
-          />
-        </div>
-        <div>
-          <label className="block mb-1 text-white">Email ID</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            className="w-full p-3 rounded-lg border bg-white"
-            placeholder="Email ID"
-            required
-          />
-        </div>
-        <div>
-          <label className="block mb-1 text-white">Phone Number</label>
-          <input
-            type="tel"
-            name="phone"
-            value={formData.phone}
-            onChange={handleInputChange}
-            className="w-full p-3 rounded-lg border bg-white"
-            placeholder="Phone Number"
-            required
-          />
-        </div>
-        <div>
-          <label className="block mb-1 text-white">Staying with</label>
-          <select
-            name="stayingWith"
-            value={formData.stayingWith}
-            onChange={handleInputChange}
-            className="w-full p-3 rounded-lg border bg-white"
-            required
-          >
-            <option value="">Select option</option>
-            <option>Friends</option>
-            <option>Family</option>
-            <option>Alone</option>
-          </select>
-        </div>
-        <div>
-          <label className="block mb-1 text-white">Profession</label>
-          <select
-            name="profession"
-            value={formData.profession}
-            onChange={handleInputChange}
-            className="w-full p-3 rounded-lg border bg-white"
-            required
-          >
-            <option value="">Select profession</option>
-            <option>Student</option>
-            <option>Working Professional</option>
-            <option>Other</option>
-          </select>
-        </div>
-        <div>
-          <label className="block mb-1 text-white">Date of Visit</label>
-          <input
-            type="date"
-            name="dateOfVisit"
-            value={formData.dateOfVisit}
-            onChange={handleInputChange}
-            className="w-full p-3 rounded-lg border bg-white"
-            required
-          />
-        </div>
-        <div>
-          <label className="block mb-1 text-white">Time Slot</label>
-          <select
-            name="timeSlot"
-            value={formData.timeSlot}
-            onChange={handleInputChange}
-            className="w-full p-3 rounded-lg border bg-white"
-            required
-          > 
-            <option value="">Select time slot</option>
-            <option>10:00 AM - 12:00 PM</option>
-            <option>12:00 PM - 2:00 PM</option>
-            <option>2:00 PM - 4:00 PM</option>
-            <option>4:00 PM - 6:00 PM</option>
-          </select>
-        </div>
+        {/* Subscription Form Modal */}
+        {showForm && (
+          <div className="fixed inset-0 bg-slate-700 bg-opacity-50 flex items-center justify-center z-50">
+            {isSubmitted ? (
+              <div className="bg-slate-900 rounded-2xl p-8 w-11/12 md:w-1/3 text-center text-white">
+                <div className="flex flex-col items-center">
+                  <div className="bg-green-100 rounded-full p-4 mb-6">
+                    <svg
+                      className="h-8 w-8 text-green-500"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  </div>
+                  <p className="text-lg mb-6">
+                    Thank you for booking your visit. Our representative will contact you shortly to confirm the details.
+                  </p>
+                  <button
+                    onClick={handleCancel}
+                    className="bg-yellow-400 hover:bg-yellow-300 text-black px-6 py-2 rounded-lg font-semibold"
+                  >
+                    OK
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-slate-900 rounded-2xl p-8 w-11/12 md:w-3/4 lg:w-1/2 relative text-black max-h-[90vh] overflow-y-auto">
+                <button
+                  onClick={handleCancel}
+                  className="absolute top-2 right-2 text-gray-500 text-2xl"
+                >
+                  &times;
+                </button>
+                <h2 className="text-2xl text-white font-bold mb-6">
+                  {selectedPlan?.title} Subscription
+                </h2>
+                <p className="text-white p-4">Please fill in your details to start your subscription</p>
 
-        {/* Full-width Submit + Cancel buttons */}
-        <div className="col-span-1 md:col-span-2 lg:col-span-3 flex flex-col md:flex-row gap-4 mt-6">
-          <button
-            type="submit"
-            className="flex-1 py-3 rounded-lg bg-yellow-400 hover:bg-yellow-300 text-black font-semibold"
-          >
-            {selectedPlan?.buttonText || "Get Started"}
-          </button>
-          <button
-            type="button"
-            onClick={handleCancel}
-            className="flex-1 py-3 rounded-lg bg-gray-300 hover:bg-gray-400 font-semibold"
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-)}
+                <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleSubmit}>
+                  {[
+                    { name: "firstName", label: "First Name", type: "text" },
+                    { name: "lastName", label: "Last Name", type: "text" },
+                    { name: "email", label: "Email ID", type: "email" },
+                    { name: "phone", label: "Phone Number", type: "tel" },
+                  ].map(({ name, label, type }) => (
+                    <div key={name}>
+                      <label className="block mb-1 text-white">{label}</label>
+                      <input
+                        type={type}
+                        name={name}
+                        value={formData[name]}
+                        onChange={handleInputChange}
+                        className="w-full p-3 rounded-lg border bg-white"
+                        placeholder={label}
+                        required
+                      />
+                    </div>
+                  ))}
 
+                  {/* Staying with */}
+                  <div>
+                    <label className="block mb-1 text-white">Staying with</label>
+                    <select
+                      name="stayingWith"
+                      value={formData.stayingWith}
+                      onChange={handleInputChange}
+                      className="w-full p-3 rounded-lg border bg-white"
+                      required
+                    >
+                      <option value="">Select option</option>
+                      <option>Friends</option>
+                      <option>Family</option>
+                      <option>Alone</option>
+                    </select>
+                  </div>
+
+                  {/* Profession */}
+                  <div>
+                    <label className="block mb-1 text-white">Profession</label>
+                    <select
+                      name="profession"
+                      value={formData.profession}
+                      onChange={handleInputChange}
+                      className="w-full p-3 rounded-lg border bg-white"
+                      required
+                    >
+                      <option value="">Select profession</option>
+                      <option>Student</option>
+                      <option>Working Professional</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+
+                  {/* Date and Time */}
+                  <div>
+                    <label className="block mb-1 text-white">Date of Visit</label>
+                    <input
+                      type="date"
+                      name="dateOfVisit"
+                      value={formData.dateOfVisit}
+                      onChange={handleInputChange}
+                      className="w-full p-3 rounded-lg border bg-white"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block mb-1 text-white">Time Slot</label>
+                    <select
+                      name="timeSlot"
+                      value={formData.timeSlot}
+                      onChange={handleInputChange}
+                      className="w-full p-3 rounded-lg border bg-white"
+                      required
+                    >
+                      <option value="">Select time slot</option>
+                      <option>10:00 AM - 12:00 PM</option>
+                      <option>12:00 PM - 2:00 PM</option>
+                      <option>2:00 PM - 4:00 PM</option>
+                      <option>4:00 PM - 6:00 PM</option>
+                    </select>
+                  </div>
+
+                  {/* Buttons */}
+                  <div className="col-span-1 md:col-span-2 flex flex-col md:flex-row gap-4 mt-6">
+                    <button
+                      type="submit"
+                      className="flex-1 py-3 rounded-lg bg-yellow-400 hover:bg-yellow-300 text-black font-semibold"
+                    >
+                      {selectedPlan?.buttonText || "Get Started"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleCancel}
+                      className="flex-1 py-3 rounded-lg bg-gray-300 hover:bg-gray-400 font-semibold"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
